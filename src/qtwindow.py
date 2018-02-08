@@ -71,7 +71,7 @@ class FractalWidget(pg.GraphicsLayoutWidget):
         self.ymin, self.ymax =  -1.5, 1.5
         self.maxit, self.col = 200, 200
 
-        self.moveSpeed = 6
+        self.moveSpeed = 24
         self.zoomSpeed = 1.06667
 
         # Array to hold iteration count for each pixel
