@@ -12,6 +12,7 @@ import pyopencl as cl
 
 platforms = cl.get_platforms()
 devs = platforms[0].get_devices()
+print(f'Using device {devs[0].name}')
 ctx = cl.Context(devices = devs)
 queue = cl.CommandQueue(ctx)
 mf = cl.mem_flags
@@ -78,8 +79,8 @@ def move_right(colums, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color,
     if colums == 0: 
         return
     data = data.reshape((ySize,xSize))
-    data[:,:] = np.roll(data,-colums,axis = 1)
-    tmp = np.zeros(ySize*colums, dtype = np.uint16)
+    data[:,:] = np.roll(data, -colums, axis=1)
+    tmp = np.zeros(ySize*colums, dtype=np.uint16)
     mandelbrot(xMin + xScale, yMax, xScale / xSize * colums, yScale, colums, ySize, maxIter, color, tmp)
     data[:,xSize-colums:xSize] = tmp.reshape((ySize, colums))
     data = data.reshape(xSize*ySize)
@@ -88,8 +89,8 @@ def move_left(colums, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, 
     if colums == 0: 
         return
     data = data.reshape((ySize,xSize))
-    data[:,:] = np.roll(data,colums,axis = 1)
-    tmp = np.zeros(ySize*colums, dtype = np.uint16)
+    data[:,:] = np.roll(data, colums, axis=1)
+    tmp = np.zeros(ySize*colums, dtype=np.uint16)
     mandelbrot(xMin - colums / xSize * xScale, yMax, xScale / xSize * colums, yScale, colums, ySize, maxIter, color, tmp)
     data[:,0:colums] = tmp.reshape((ySize, colums))
     data = data.reshape(xSize*ySize)
@@ -98,8 +99,8 @@ def move_up(rows, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data
     if rows == 0: 
         return
     data = data.reshape((ySize,xSize))
-    data[:,:] = np.roll(data,rows,axis = 0)
-    tmp = np.zeros(xSize*rows, dtype = np.uint16)
+    data[:,:] = np.roll(data, rows, axis=0)
+    tmp = np.zeros(xSize*rows, dtype=np.uint16)
     mandelbrot(xMin, yMax - rows / ySize * yScale, xScale, yScale / ySize * rows, xSize, rows, maxIter, color, tmp)
     data[0:rows,:] = tmp.reshape((rows, xSize))
     data = data.reshape(xSize*ySize)
@@ -108,8 +109,8 @@ def move_down(rows, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, da
     if rows == 0: 
         return
     data = data.reshape((ySize,xSize))
-    data[:,:] = np.roll(data,-rows,axis = 0)
-    tmp = np.zeros(xSize*rows, dtype = np.uint16) 
+    data[:,:] = np.roll(data, -rows, axis=0)
+    tmp = np.zeros(xSize*rows, dtype=np.uint16)
     mandelbrot(xMin, yMax + yScale, xScale, yScale / ySize * rows, xSize, rows, maxIter, color, tmp)
     data[ySize-rows:ySize,:] = tmp.reshape((rows, xSize))
     data = data.reshape(xSize*ySize) 
