@@ -1,0 +1,15 @@
+appdirs==1.4.3
+attrs==17.4.0
+cffi==1.11.4
+decorator==4.2.1
+numpy==1.14.0
+pluggy==0.6.0
+py==1.5.2
+pycparser==2.18
+pyopencl==2018.1
+PyQt5==5.10
+pyqtgraph==0.10.0
+pytest==3.4.0
+pytools==2017.6
+sip==4.19.7
+six==1.11.0
