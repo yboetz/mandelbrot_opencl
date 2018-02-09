@@ -26,6 +26,9 @@ if len(platforms) > 1:
             break
         except (ValueError, IndexError):
             print('Please enter a valid number...')
+        except KeyboardInterrupt:
+            print('Interrupted...')
+            sys.exit(0)
 else:
     devices = platforms[0].get_devices()
 
@@ -44,6 +47,9 @@ if len(devices) > 1:
             break
         except (ValueError, IndexError):
             print('Please enter a valid number...')
+        except KeyboardInterrupt:
+            print('Interrupted...')
+            sys.exit(0)
 else:
     dev = devices[0]
 
