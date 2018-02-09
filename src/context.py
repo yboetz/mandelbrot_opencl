@@ -64,53 +64,57 @@ code = """
 
 prg = cl.Program(ctx,code).build()
 
-def mandelbrot(xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data):
-    dx = xScale / xSize
-    dy = yScale / ySize
+def mandelbrot(xmin, xmax, ymin, ymax, xsize, ysize, maxIter, color, data):
+    dx = (xmax - xmin) / xsize
+    dy = (ymin - ymax) / ysize
     
     output_cl = cl.Buffer(ctx, mf.WRITE_ONLY, data.nbytes)
             
-    prg.mandelbrot(queue, (xSize//8, ySize), None, np.float64(xMin), np.float64(yMax), 
+    prg.mandelbrot(queue, (xsize//8, ysize), None, np.float64(xmin), np.float64(ymax), 
                    np.float64(dx), np.float64(dy), np.uint16(maxIter), np.uint16(color), output_cl)
 
     cl.enqueue_copy(queue, data, output_cl).wait()
 
-def move_right(colums, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data):
+def move_right(colums, xmin, xmax, ymin, ymax, xsize, ysize, maxIter, color, data):
     if colums == 0: 
         return
-    data = data.reshape((ySize,xSize))
+    xscale = (xmax - xmin) / xsize
+    data = data.reshape((ysize,xsize))
     data[:,:] = np.roll(data, -colums, axis=1)
-    tmp = np.zeros(ySize*colums, dtype=np.uint16)
-    mandelbrot(xMin + xScale, yMax, xScale / xSize * colums, yScale, colums, ySize, maxIter, color, tmp)
-    data[:,xSize-colums:xSize] = tmp.reshape((ySize, colums))
-    data = data.reshape(xSize*ySize)
+    tmp = np.zeros(ysize*colums, dtype=np.uint16)
+    mandelbrot(xmax, xmax + xscale*colums, ymin, ymax, colums, ysize, maxIter, color, tmp)
+    data[:,xsize-colums:xsize] = tmp.reshape((ysize, colums))
+    data = data.reshape(xsize*ysize)
 
-def move_left(colums, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data):
+def move_left(colums, xmin, xmax, ymin, ymax, xsize, ysize, maxIter, color, data):
     if colums == 0: 
         return
-    data = data.reshape((ySize,xSize))
+    xscale = (xmax - xmin) / xsize
+    data = data.reshape((ysize,xsize))
     data[:,:] = np.roll(data, colums, axis=1)
-    tmp = np.zeros(ySize*colums, dtype=np.uint16)
-    mandelbrot(xMin - colums / xSize * xScale, yMax, xScale / xSize * colums, yScale, colums, ySize, maxIter, color, tmp)
-    data[:,0:colums] = tmp.reshape((ySize, colums))
-    data = data.reshape(xSize*ySize)
+    tmp = np.zeros(ysize*colums, dtype=np.uint16)
+    mandelbrot(xmin - xscale*colums, xmin, ymin, ymax, colums, ysize, maxIter, color, tmp)
+    data[:,0:colums] = tmp.reshape((ysize, colums))
+    data = data.reshape(xsize*ysize)
 
-def move_up(rows, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data):
+def move_up(rows, xmin, xmax, ymin, ymax, xsize, ysize, maxIter, color, data):
     if rows == 0: 
         return
-    data = data.reshape((ySize,xSize))
+    yscale = (ymax - ymin) / ysize
+    data = data.reshape((ysize,xsize))
     data[:,:] = np.roll(data, rows, axis=0)
-    tmp = np.zeros(xSize*rows, dtype=np.uint16)
-    mandelbrot(xMin, yMax - rows / ySize * yScale, xScale, yScale / ySize * rows, xSize, rows, maxIter, color, tmp)
-    data[0:rows,:] = tmp.reshape((rows, xSize))
-    data = data.reshape(xSize*ySize)
+    tmp = np.zeros(xsize*rows, dtype=np.uint16)
+    mandelbrot(xmin, xmax, ymax , ymax + yscale*rows, xsize, rows, maxIter, color, tmp)
+    data[0:rows,:] = tmp.reshape((rows, xsize))
+    data = data.reshape(xsize*ysize)
 
-def move_down(rows, xMin, yMax, xScale, yScale, xSize, ySize, maxIter, color, data):
+def move_down(rows, xmin, xmax, ymin, ymax, xsize, ysize, maxIter, color, data):
     if rows == 0: 
         return
-    data = data.reshape((ySize,xSize))
+    yscale = (ymax - ymin) / ysize
+    data = data.reshape((ysize,xsize))
     data[:,:] = np.roll(data, -rows, axis=0)
-    tmp = np.zeros(xSize*rows, dtype=np.uint16)
-    mandelbrot(xMin, yMax + yScale, xScale, yScale / ySize * rows, xSize, rows, maxIter, color, tmp)
-    data[ySize-rows:ySize,:] = tmp.reshape((rows, xSize))
-    data = data.reshape(xSize*ySize) 
+    tmp = np.zeros(xsize*rows, dtype=np.uint16)
+    mandelbrot(xmin, xmax, ymin - yscale*rows, ymin, xsize, rows, maxIter, color, tmp)
+    data[ysize-rows:ysize,:] = tmp.reshape((rows, xsize))
+    data = data.reshape(xsize*ysize) 

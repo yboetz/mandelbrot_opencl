@@ -17,48 +17,59 @@ from context import *
 
 
 class Fractal:
-    def __init__(self, xSize, ySize, xmin, xmax, ymin, ymax, maxIter, color, data):
-        self.size = (xSize, ySize)
+    def __init__(self, xsize, ysize, xmin, xmax, ymin, ymax, maxIter, color, data):
+        self.xsize, self.ysize = xsize, ysize
         self.xmin, self.xmax = xmin, xmax
         self.ymin, self.ymax = ymin, ymax
         self.maxIter = maxIter
         self.color = color
         self.data = data
-        self.initial()
-        
-    def initial(self):
-        self.topLeft = np.array([self.xmin, self.ymax], dtype=np.float64)
-        self.scale = np.array([self.xmax - self.xmin, self.ymin - self.ymax], dtype=np.float64)
         self.redraw()
     
     def redraw(self):
-        mandelbrot(*(tuple(self.topLeft) + tuple(self.scale) + self.size + 
-                     (self.maxIter,) + (self.color,) + (self.data,)))
+        mandelbrot(self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
+                   self.maxIter, self.color, self.data)
         
     def zoom(self, zoomFactor):
-        self.topLeft = self.topLeft + 0.5 * (1-zoomFactor) * self.scale
-        self.scale *= zoomFactor
+        xscale = (self.xmax - self.xmin)
+        yscale = (self.ymax - self.ymin)
+        self.xmin += 0.5 * (1-zoomFactor) * xscale
+        self.xmax -= 0.5 * (1-zoomFactor) * xscale
+        self.ymin += 0.5 * (1-zoomFactor) * yscale
+        self.ymax -= 0.5 * (1-zoomFactor) * yscale
         self.redraw()
            
-    def moveR(self, colums):
-        move_right(*((colums,) + tuple(self.topLeft) + tuple(self.scale) + 
-                      self.size + (self.maxIter,) + (self.color,) + (self.data,)))
-        self.topLeft[0] += self.scale[0] * colums / self.size[0]
+    def moveR(self, columns):
+        move_right(columns, self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
+                   self.maxIter, self.color, self.data)
+        self.xmin += (self.xmax - self.xmin)/self.xsize * columns
+        self.xmax += (self.xmax - self.xmin)/self.xsize * columns
         
-    def moveL(self, colums):
-        move_left(*((colums,) + tuple(self.topLeft) + tuple(self.scale) + 
-                      self.size + (self.maxIter,) + (self.color,) + (self.data,)))
-        self.topLeft[0] -= self.scale[0] * colums / self.size[0]
+    def moveL(self, columns):
+        move_left(columns, self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
+                  self.maxIter, self.color, self.data)
+        self.xmin -= (self.xmax - self.xmin)/self.xsize * columns
+        self.xmax -= (self.xmax - self.xmin)/self.xsize * columns
         
     def moveU(self, rows):
-        move_up(*((rows,) + tuple(self.topLeft) + tuple(self.scale) + 
-                      self.size + (self.maxIter,) + (self.color,) + (self.data,)))
-        self.topLeft[1] -= self.scale[1] * rows / self.size[1]
+        move_up(rows, self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
+                self.maxIter, self.color, self.data)
+        self.ymin += (self.ymax - self.ymin)/self.ysize * rows
+        self.ymax += (self.ymax - self.ymin)/self.ysize * rows
         
     def moveD(self, rows):
-        move_down(*((rows,) + tuple(self.topLeft) + tuple(self.scale) + 
-                      self.size + (self.maxIter,) + (self.color,) + (self.data,)))
-        self.topLeft[1] += self.scale[1] * rows / self.size[1]
+        move_down(rows, self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
+                  self.maxIter, self.color, self.data)
+        self.ymin -= (self.ymax - self.ymin)/self.ysize * rows
+        self.ymax -= (self.ymax - self.ymin)/self.ysize * rows
+
+    def setMaxIt(self, maxIter):
+        self.maxIter = maxIter
+        self.redraw()
+
+    def setCol(self, color):
+        self.color = color
+        self.redraw()
 
 
 class FractalWidget(pg.GraphicsLayoutWidget):
@@ -72,7 +83,7 @@ class FractalWidget(pg.GraphicsLayoutWidget):
         self.maxit, self.col = 200, 200
 
         self.moveSpeed = 24
-        self.zoomSpeed = 1.06667
+        self.zoomSpeed = 1.0667
 
         # Array to hold iteration count for each pixel
         self.data = np.zeros(self.xsize*self.ysize, dtype=np.uint16)
