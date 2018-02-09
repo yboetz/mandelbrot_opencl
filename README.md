@@ -8,7 +8,7 @@ Number crunching code is done in OpenCL, which is then called in Python and visu
 
 You will need an installation of OpenCL. For Intel CPUs/GPUs on Ubuntu you can follow this post on
 [askubuntu](https://askubuntu.com/questions/850281/opencl-on-ubuntu-16-04-intel-sandy-bridge-cpu).
-For other distributions and NVidia or AMD GPUs you can follow Andreas Klöckner's
+For other distributions and Nvidia or AMD GPUs you can follow Andreas Klöckner's
 [wiki](https://wiki.tiker.net/OpenCLHowTo).
 
 You also need python 3.x with the following packages:
@@ -26,16 +26,16 @@ so you don't clutter your system python installation with additional packages.
 
 Clone the git repository
 
-    git clone git@github.com:yboetz/mandelbrot.git
+    git clone git@github.com:yboetz/mandelbrot_opencl.git
 
 Then install the required python packages (best in your virtualenv)
 
-    cd mandelbrot
+    cd mandelbrot_opencl
     pip install -r requirements.txt
 
 Run the widget
 
-	python main.py
+	python src/main.py
 
 
 #### Key controls ####
