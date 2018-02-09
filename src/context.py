@@ -5,8 +5,6 @@ Created on Thu Apr  2 17:45:39 2015
 @author: yboetz
 """
 
-# Create context and define kernel
-
 import os, sys
 import numpy as np
 import pyopencl as cl

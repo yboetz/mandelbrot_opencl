@@ -1,6 +1,6 @@
 __kernel
-__attribute__((vec_type_hint(double8))) 
-void mandelbrot(const double x_min, const double y_max, const double dx, const double dy, 
+__attribute__((vec_type_hint(double8)))
+void mandelbrot(const double x_min, const double y_max, const double dx, const double dy,
                 const ushort max_iter, const ushort color, __global ushort *output)
 {
     const ushort Idx = get_global_id(0) * 8;
@@ -26,11 +26,11 @@ void mandelbrot(const double x_min, const double y_max, const double dx, const d
     int8 counter = (int8)(0);
     int8 which = (int8)(-1);
     ushort i;
-        
+
     for(i = 0; i < max_iter && any(which); i++) 
         {
         im = re*im;
-        im = 2*im + c_im;
+        im = 2.0*im + c_im;
         re = re_2 - im_2 + c_re;
         re_2 = re*re;
         im_2 = im*im;
