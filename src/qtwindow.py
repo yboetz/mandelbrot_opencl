@@ -29,6 +29,16 @@ class Fractal:
     def redraw(self):
         mandelbrot(self.xmin, self.xmax, self.ymin, self.ymax, self.xsize, self.xsize, 
                    self.maxIter, self.color, self.data)
+
+    def setExtent(self, x, y):
+        xscale = (self.xmax - self.xmin);
+        yscale = (self.ymax - self.ymin);
+        xmiddle = self.xmin + xscale / self.xsize * x;
+        ymiddle = self.ymax - yscale / self.ysize * y;
+        self.xmin = xmiddle - 0.5 * xscale;
+        self.xmax = xmiddle + 0.5 * xscale;
+        self.ymin = ymiddle - 0.5 * yscale;
+        self.ymax = ymiddle + 0.5 * yscale;
         
     def zoom(self, zoomFactor):
         xscale = (self.xmax - self.xmin)
@@ -104,7 +114,7 @@ class FractalWidget(pg.GraphicsLayoutWidget):
         view.addItem(self.ti)
 
         # Connect mouse click event to function mouseEvent
-        # self.scene().sigMouseClicked.connect(self.mouseEvent)
+        self.scene().sigMouseClicked.connect(self.mouseEvent)
 
         # Dictionary with functions to call at keypress
         self.staticKeyList = {
@@ -176,14 +186,15 @@ class FractalWidget(pg.GraphicsLayoutWidget):
                 pass
 
     # Takes mouse click and zooms in or out at position
-    # def mouseEvent(self, e):
-    #     pos = self.ip.mapFromScene(e.scenePos())
-    #     if not (0 < pos.x() < self.xsize) or not (0 < pos.y() < self.ysize):
-    #         return
-    #     bts = {1:self.zoomIn, 2:self.zoomOut}
-    #     if e.button() in bts:
-    #         self.fractal.setExtent(pos.x(), pos.y())
-    #         bts.get(e.button())()
+    def mouseEvent(self, e):
+        pos = self.ip.mapFromScene(e.scenePos())
+        if not (0 < pos.x() < self.xsize) or not (0 < pos.y() < self.ysize):
+            return
+        bts = {1:self.zoomIn, 2:self.zoomOut}
+        if e.button() in bts:
+            self.fractal.setExtent(pos.x(), pos.y())
+            print(pos.x(), pos.y())
+            bts.get(e.button())()
 
     def updateImage(self):
         self.ip.setImage(self.data.reshape((self.ysize,self.xsize)).transpose(),
