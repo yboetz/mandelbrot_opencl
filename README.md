@@ -6,7 +6,12 @@ Number crunching code is done in OpenCL, which is then called in Python and visu
 
 #### Requirements ####
 
-You need python 3.x with the following packages:
+You will need an installation of OpenCL. For Intel CPUs/GPUs on Ubuntu you can follow this post on
+[askubuntu](https://askubuntu.com/questions/850281/opencl-on-ubuntu-16-04-intel-sandy-bridge-cpu).
+For other distributions and NVidia or AMD GPUs you can follow Andreas Klöckner's
+[wiki](https://wiki.tiker.net/OpenCLHowTo).
+
+You also need python 3.x with the following packages:
 
     numpy
     pyopencl
